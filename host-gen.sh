@@ -14,7 +14,7 @@ STEVENBLACK_BAK=$HOST_BAK_DIR/01-stevenblack.hosts
 main(){
     config_type = $(get_config_type)
     if [[$config_type != "none"]]; then
-        load_config
+        load_config $config_type
     fi
     mkdir -p $HOST_BAK_DIR
     cp $HOST_ORIG $HOST_BAK
