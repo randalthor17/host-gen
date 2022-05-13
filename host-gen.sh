@@ -16,11 +16,7 @@ EOF
 
 main(){
     source <(echo "$config_def")
-    if [[ -f $CONFIG ]]; then
-        source $CONFIG
-    else
-        config_gen
-    fi
+    parse_opts "$@"
     mkdir -p $HOST_BAK_DIR
     cp $HOST_ORIG $HOST_BAK
     echo "Fetching StevenBlack hosts..."
@@ -41,10 +37,55 @@ main(){
 
 }
 
-config_gen(){
-    mkdir -p $CONFIG_DIR
-    echo "No config file found. Generating from default..."
-    echo "$config_def" > $CONFIG
+parse_opts(){
+    # Check the commandline flags early for '--config|-c' and load it.
+    [[ "$*" != *--config* && "$*" != *-c* ]] && config_check
+    while [[ "$1" ]]; do
+        case $1 in
+            --config|-c)
+                shift
+                $CONFIG=$1
+                source $CONFIG
+                ;;
+            --custom_url|-u)
+                shift
+                STEVENBLACK_URL=$1
+                ;;
+            --host_output|-o)
+                shift
+                HOST_ORIG=$1
+                ;;
+            --host_src_dir|-s)
+                shift
+                HOST_SRC_DIR=$1
+                ;;
+            --host_backup_dir|-b)
+                shift
+                HOST_BAK_DIR=$1
+                ;;
+            --help|--usage|-h)
+                echo "Usage: $0 [--config|-c <config_file>] [--custom_url|-u <url>] [--host_output|-o <host_file>] [--host_src_dir|-s <host_src_dir>] [--host_backup_dir|-b <host_backup_dir>] [--help|--usage|-h]"
+                exit 0
+                ;;
+            *)
+                echo "Unknown option: $1"
+                echo "Usage: $0 [--config|-c <config_file>] [--custom_url|-u <url>] [--host_output|-o <host_file>] [--host_src_dir|-s <host_src_dir>] [--host_backup_dir|-b <host_backup_dir>] [--help|--usage|-h]"
+                exit 1
+                ;;
+        esac
+        shift
+    done
+}
+
+config_check(){
+    if [[ -f $CONFIG ]]; then
+        source $CONFIG
+    else
+        mkdir -p $CONFIG_DIR
+        echo "No config file found. Generating from default..."
+        echo "$config_def" > $CONFIG
+        echo "Config file generated."
+    fi
 }
 
 fetch_url(){
