@@ -1,0 +1,20 @@
+[global]
+
+# the config will reside in $CONFIG_DIR/config.toml
+CONFIG_DIR = "/etc/host-gen"
+
+# the hosts files that are downloaded are going to be saved in $HOST_SAVEDIR, and the backups are going to be in $HOST_SAVEDIR/backup. 
+HOST_SAVEDIR = "/etc/hosts.d"
+
+[src.builtin]
+
+name = "StevenBlack"
+url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews-gambling-porn/hosts"
+
+# the priority is a number between 01-99, and it specifies the order in which the hosts sources are concatenated into the resultant hosts file.
+priority = "01"
+
+[src.custom.1]
+name = "dummy"
+url = "http://0.0.0.0"
+priority = "99"
